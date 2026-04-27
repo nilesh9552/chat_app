@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube</title>
+<link rel="stylesheet" href="./css/styleindex.css?v=20260311">
+</head>
+<body>
+
+<header class="top-bar">
+    <div class="top-left">
+        <button class="icon-btn menu-btn" type="button" aria-label="Menu">
+            <span class="menu-lines" aria-hidden="true"></span>
+        </button>
+
+        <div class="brand" aria-label="YouTube">
+        <div class="yt-logo" aria-hidden="true">
+            <svg viewBox="0 0 34 24" width="34" height="24" aria-hidden="true" focusable="false">
+                <rect x="0" y="0" width="34" height="24" rx="7" fill="#ff0000"></rect>
+                <path d="M14 7L22 12L14 17V7Z" fill="#ffffff"></path>
+            </svg>
+        </div>
+            <div class="yt-wordmark">YouTube</div>
+            <span class="country-tag">IN</span>
+        </div>
+    </div>
+
+    <div class="top-center">
+        <form class="search-wrap" id="search-form" role="search" onsubmit="return false;">
+            <input type="search" class="search-input" id="search-input" placeholder="Search" aria-label="Search">
+            <button type="submit" class="search-btn" aria-label="Search">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+                    <circle cx="10" cy="10" r="6" fill="none" stroke="#606060" stroke-width="2"></circle>
+                    <line x1="14.8" y1="14.8" x2="20" y2="20" stroke="#606060" stroke-width="2" stroke-linecap="round"></line>
+                </svg>
+            </button>
+        </form>
+        <button class="icon-btn mic-btn" type="button" aria-label="Search with your voice">
+            <span class="mic-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="top-right">
+        <button class="icon-btn create-btn" type="button" aria-label="Create">+</button>
+        <button class="icon-btn notify-btn" type="button" aria-label="Notifications">
+            <span class="notify-icon" aria-hidden="true"></span>
+        </button>
+        <button class="profile-btn" type="button" onclick="goToChat()" aria-label="Open profile and chat login" title="Profile">U</button>
+    </div>
+</header>
+
+<main class="yt-shell">
+    <aside class="yt-sidebar" aria-label="Navigation">
+        <button class="side-item active" type="button"><span class="side-dot"></span>Home</button>
+        <button class="side-item" type="button"><span class="side-dot"></span>Shorts</button>
+        <button class="side-item" type="button"><span class="side-dot"></span>Subscriptions</button>
+        <hr class="side-divider">
+        <button class="side-item" type="button"><span class="side-dot"></span>History</button>
+        <button class="side-item" type="button"><span class="side-dot"></span>Playlists</button>
+        <button class="side-item" type="button"><span class="side-dot"></span>Your videos</button>
+        <button class="side-item" type="button"><span class="side-dot"></span>Watch later</button>
+    </aside>
+
+    <section class="yt-main" aria-label="Video feed">
+        <div class="chips" id="chips">
+            <button class="chip active" type="button">All</button>
+            <button class="chip" type="button">Music</button>
+            <button class="chip" type="button">Gaming</button>
+            <button class="chip" type="button">News</button>
+            <button class="chip" type="button">Live</button>
+            <button class="chip" type="button">Mixes</button>
+            <button class="chip" type="button">Podcasts</button>
+            <button class="chip" type="button">Recently uploaded</button>
+            <button class="chip" type="button">Watched</button>
+        </div>
+
+        <div class="video-feed" id="video-feed"></div>
+    </section>
+</main>
+
+<section class="no-network" id="no-network" hidden>
+    <svg viewBox="0 0 24 24" width="68" height="68" aria-hidden="true" focusable="false">
+        <path d="M3 16c0-2.2 1.8-4 4-4h.3A5.5 5.5 0 0 1 18 10a4 4 0 0 1 0 8H7c-2.2 0-4-1.8-4-4z" fill="#e5e5e5"></path>
+        <path d="M4 4l16 16" stroke="#909090" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <h3>You're offline</h3>
+    <p>Check your internet connection and try again.</p>
+    <button type="button" onclick="hideNoNetwork()">Retry</button>
+</section>
+
+<script>
+const VIDEO_LIBRARY = [
+    { id: "dQw4w9WgXcQ", title: "How to Build a Modern Web App in 15 Minutes", channel: "Code Studio", views: "1.2M views", age: "2 weeks ago", duration: "15:22" },
+    { id: "J---aiyznGQ", title: "The Funniest Cat Moments of the Month", channel: "Pet Planet", views: "782K views", age: "5 days ago", duration: "08:17" },
+    { id: "9bZkp7q19f0", title: "Top 20 Music Hits Playlist 2026", channel: "Music Spot", views: "3.9M views", age: "1 month ago", duration: "44:05" },
+    { id: "fJ9rUzIMcZQ", title: "Live Concert Full Performance", channel: "Stage Live", views: "946K views", age: "3 weeks ago", duration: "1:21:44" },
+    { id: "3JZ_D3ELwOQ", title: "Best JavaScript Tips You Should Know", channel: "Dev Talks", views: "517K views", age: "4 days ago", duration: "12:08" },
+    { id: "kJQP7kiw5Fk", title: "Summer Travel Vlog in 4K", channel: "Travel Vibes", views: "2.1M views", age: "2 months ago", duration: "18:36" },
+    { id: "M7lc1UVf-VE", title: "YouTube API Crash Course for Beginners", channel: "Code Lab", views: "288K views", age: "6 days ago", duration: "21:40" },
+    { id: "ysz5S6PUM-U", title: "Chill Beats to Study and Work", channel: "LoFi Daily", views: "5.6M views", age: "7 months ago", duration: "2:00:00" }
+];
+
+let renderedVideos = 0;
+const BATCH_SIZE = 8;
+let activeVideos = VIDEO_LIBRARY.slice();
+
+function createVideoCard(video, index) {
+    const card = document.createElement("article");
+    card.className = "video-item";
+
+    const safeTitle = video.title;
+    const safeChannel = video.channel;
+    const avatar = safeChannel.charAt(0).toUpperCase();
+    const thumbUrl = "https://i.ytimg.com/vi/" + video.id + "/hqdefault.jpg";
+    const watchUrl = "https://www.youtube.com/watch?v=" + video.id;
+
+    card.innerHTML =
+        "<a class=\"thumb-wrap\" href=\"" + watchUrl + "\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+            "<img src=\"" + thumbUrl + "\" alt=\"Video thumbnail\" loading=\"lazy\">" +
+            "<span class=\"duration\">" + video.duration + "</span>" +
+        "</a>" +
+        "<div class=\"video-meta\">" +
+            "<div class=\"channel-avatar\">" + avatar + "</div>" +
+            "<div class=\"meta-text\">" +
+                "<a class=\"video-title\" href=\"" + watchUrl + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + safeTitle + "</a>" +
+                "<div class=\"video-sub\">" + safeChannel + "</div>" +
+                "<div class=\"video-sub\">" + video.views + " • " + video.age + "</div>" +
+            "</div>" +
+        "</div>";
+
+    return card;
+}
+
+function renderNextBatch() {
+    const feed = document.getElementById("video-feed");
+    if (!feed) {
+        return;
+    }
+
+    if (activeVideos.length === 0) {
+        if (!feed.querySelector(".empty-feed")) {
+            const empty = document.createElement("p");
+            empty.className = "empty-feed";
+            empty.textContent = "No videos found. Try a different search.";
+            feed.appendChild(empty);
+        }
+        return;
+    }
+
+    feed.querySelectorAll(".empty-feed").forEach(function (node) {
+        node.remove();
+    });
+
+    for (let i = 0; i < BATCH_SIZE; i += 1) {
+        const index = renderedVideos + i;
+        if (index >= activeVideos.length) {
+            break;
+        }
+
+        const video = activeVideos[index];
+        feed.appendChild(createVideoCard(video, renderedVideos + i));
+    }
+
+    renderedVideos += BATCH_SIZE;
+}
+
+function resetFeedWithVideos(videos) {
+    const feed = document.getElementById("video-feed");
+    if (!feed) {
+        return;
+    }
+
+    activeVideos = videos;
+    renderedVideos = 0;
+    feed.innerHTML = "";
+    renderNextBatch();
+    renderNextBatch();
+}
+
+function filterVideos(query) {
+    const normalized = query.trim().toLowerCase();
+
+    if (normalized === "") {
+        resetFeedWithVideos(VIDEO_LIBRARY.slice());
+        return;
+    }
+
+    const filtered = VIDEO_LIBRARY.filter(function (video) {
+        return video.title.toLowerCase().includes(normalized) || video.channel.toLowerCase().includes(normalized);
+    });
+
+    resetFeedWithVideos(filtered);
+}
+
+function setupSearch() {
+    const form = document.getElementById("search-form");
+    const input = document.getElementById("search-input");
+    if (!form || !input) {
+        return;
+    }
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        filterVideos(input.value || "");
+    });
+
+    input.addEventListener("input", function () {
+        filterVideos(input.value || "");
+    });
+}
+
+function setupInfiniteScroll() {
+    let loading = false;
+
+    window.addEventListener("scroll", function () {
+        if (loading) {
+            return;
+        }
+
+        if (renderedVideos >= activeVideos.length) {
+            return;
+        }
+
+        const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 700;
+        if (!nearBottom) {
+            return;
+        }
+
+        loading = true;
+        renderNextBatch();
+        setTimeout(function () {
+            loading = false;
+        }, 80);
+    });
+}
+
+function showNoNetwork() {
+    const noNetwork = document.getElementById("no-network");
+    if (noNetwork) {
+        noNetwork.hidden = false;
+    }
+}
+
+function hideNoNetwork() {
+    const noNetwork = document.getElementById("no-network");
+    if (noNetwork) {
+        noNetwork.hidden = true;
+    }
+}
+
+function goToChat() {
+    hideNoNetwork();
+
+    const secretName = prompt("Enter your Gmail to login");
+
+    if (!secretName || secretName.trim() === '') {
+        return;
+    }
+
+    fetch("./validate_secret.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "secret_name=" + encodeURIComponent(secretName.trim())
+    }).then(async (res) => {
+        if (!res.ok) {
+            const errorText = (await res.text()) || "Invalid secret name";
+
+            if (res.status === 403 && /invalid secret name/i.test(errorText)) {
+                showNoNetwork();
+                return;
+            }
+
+            throw new Error(errorText);
+        }
+
+        const displayName = prompt("Enter your name:");
+
+        if (!displayName || displayName.trim() === '') {
+            return;
+        }
+
+        const loginResponse = await fetch("./login.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "secret_name=" + encodeURIComponent(secretName.trim()) + "&display_name=" + encodeURIComponent(displayName.trim())
+        });
+
+        if (!loginResponse.ok) {
+            const loginErrorText = (await loginResponse.text()) || "Unable to enter chat";
+            throw new Error(loginErrorText);
+        }
+
+        window.location.href = "./gappa.php";
+    }).catch((err) => {
+        alert(err.message || "Unable to enter chat");
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    resetFeedWithVideos(VIDEO_LIBRARY.slice());
+    setupSearch();
+    setupInfiniteScroll();
+});
+</script>
+
+</body>
+</html>
