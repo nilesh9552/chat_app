@@ -369,6 +369,39 @@ async function startVoiceCall(silentMode) {
     }
 }
 
+// Refresh button - just poll call state without starting a new call
+async function refreshCallState() {
+    try {
+        setCallBanner("Refreshing...", true);
+        const state = await fetchCallState();
+        
+        if (!state) {
+            setCallBanner("Refresh failed - no response", true);
+            return;
+        }
+
+        // Use the central sync function for proper UI and peer connection handling
+        await syncCallUiFromState(state);
+        
+        // If there's an active call and we have offer/answer, ensure peer connection is ready
+        if (state && state.status !== "idle" && state.call_id) {
+            const currentUser = getCurrentUserName().trim().toLowerCase();
+            const callerName = (state.caller || "").toLowerCase();
+            const calleeName = (state.callee || "").toLowerCase();
+            const isCaller = callerName === currentUser;
+            const isCallee = calleeName === currentUser;
+            
+            // Create peer connection if we're part of the call but don't have one yet
+            if ((isCaller || isCallee) && !peerConnection && state.status !== "ringing") {
+                await attachLocalTracks(state.call_id, isCaller);
+            }
+        }
+        
+    } catch (err) {
+        setCallBanner("Refresh failed", true);
+    }
+}
+
 async function acceptIncomingCall() {
     try {
         if (!callState || !callState.call_id) {
@@ -824,9 +857,9 @@ function setClockTime() {
     });
 }
 
-setInterval(loadChat, 1000);
-setInterval(loadClock, 4000);
-setInterval(loadPresence, 5000);
+setInterval(loadChat, 5000);    // Reduced from 1000ms (86,400 → 17,280/day)
+setInterval(loadClock, 15000);  // Reduced from 4000ms (21,600 → 5,760/day)
+setInterval(loadPresence, 15000);// Reduced from 5000ms (17,280 → 5,760/day)
 
 document.addEventListener("DOMContentLoaded", function () {
     const msgInput = document.getElementById("msg");
@@ -848,7 +881,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (callPollId) {
         clearInterval(callPollId);
     }
-    callPollId = setInterval(loadCallState, 1200);
+    // Poll call state every 5 seconds (reduced from 1200ms)
+    // During active call, JavaScript handles WebRTC locally - server polls just for state sync
+    callPollId = setInterval(loadCallState, 5000);
 
     if (clockInput) {
         clockInput.addEventListener("input", function () {

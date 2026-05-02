@@ -39,6 +39,7 @@ if ($method === 'GET') {
     $state = storage_get_call_state();
     $isParticipant = call_user_is_participant($state, $currentUser);
     $isJoinedCall = $state['status'] === 'connecting' || $state['status'] === 'connected';
+    $isRingingCall = $state['status'] === 'ringing';
     $isSilentCall = !empty($state['is_silent']);
 
     if ($isSilentCall && !call_is_nilesh($currentUser)) {
@@ -46,9 +47,13 @@ if ($method === 'GET') {
     }
 
     // Keep ringing visible for join, but hide active call details from non-participants.
+    // Only hide if user is NOT a participant (caller or callee)
     if ($isJoinedCall && !$isParticipant && !call_is_nilesh($currentUser)) {
         $state = storage_default_call_state();
     }
+
+    // Allow ringing state to be visible to everyone so they can join
+    // Don't hide ringing state
 
     call_json_ok($state);
 }

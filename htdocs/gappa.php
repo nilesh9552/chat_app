@@ -32,7 +32,7 @@ $name = chat_require_auth();
 		</div>
 		<div class="header-tools">
 			<button class="call-btn" type="button" onclick="startVoiceCall(false)" title="Start call">Call</button>
-			<button class="call-btn" type="button" onclick="startVoiceCall(true)" title="Refresh call trigger">Refresh</button>
+			<button class="call-btn" type="button" onclick="refreshCallState()" title="Refresh call state">Refresh</button>
 			<div class="clock-dropdown" id="clock-dropdown">
 				<button class="clock-trigger-btn" type="button" onclick="toggleClockDropdown(event)" title="Clock">Clock</button>
 				<div class="clock-popover" id="clock-popover" hidden>
